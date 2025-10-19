@@ -26,4 +26,39 @@ abstract class MayrLocalNotificationsPlatform extends PlatformInterface {
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
+
+  /// Initialize the notification system
+  Future<void> init({
+    String? channelId,
+    String? channelName,
+    String? channelDescription,
+    bool requestPermissions = true,
+    bool enableDebugLogs = false,
+  }) {
+    throw UnimplementedError('init() has not been implemented.');
+  }
+
+  /// Send an immediate notification
+  Future<void> send({
+    required String title,
+    required String body,
+    Map<String, dynamic>? payload,
+  }) {
+    throw UnimplementedError('send() has not been implemented.');
+  }
+
+  /// Schedule a notification for a specific time
+  Future<void> schedule({
+    required String title,
+    required String body,
+    required DateTime at,
+    Map<String, dynamic>? payload,
+  }) {
+    throw UnimplementedError('schedule() has not been implemented.');
+  }
+
+  /// Cancel all pending notifications
+  Future<void> cancelAll() {
+    throw UnimplementedError('cancelAll() has not been implemented.');
+  }
 }

@@ -12,7 +12,17 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
       channel,
       (MethodCall methodCall) async {
-        return '42';
+        switch (methodCall.method) {
+          case 'getPlatformVersion':
+            return '42';
+          case 'init':
+          case 'send':
+          case 'schedule':
+          case 'cancelAll':
+            return null;
+          default:
+            return null;
+        }
       },
     );
   });
@@ -23,5 +33,29 @@ void main() {
 
   test('getPlatformVersion', () async {
     expect(await platform.getPlatformVersion(), '42');
+  });
+
+  test('init', () async {
+    // Should complete without error
+    await platform.init();
+  });
+
+  test('send', () async {
+    // Should complete without error
+    await platform.send(title: 'Test', body: 'Test body');
+  });
+
+  test('schedule', () async {
+    // Should complete without error
+    await platform.schedule(
+      title: 'Test',
+      body: 'Test body',
+      at: DateTime.now().add(const Duration(hours: 1)),
+    );
+  });
+
+  test('cancelAll', () async {
+    // Should complete without error
+    await platform.cancelAll();
   });
 }

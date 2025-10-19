@@ -1,7 +1,8 @@
 name: mayr_local_notifications
-description: "A new Flutter plugin project."
-version: 0.0.1
-homepage:
+description: "A simplified local notification plugin for Flutter - no native boilerplate, just plug and play across Android, iOS, and macOS."
+version: 1.0.0
+homepage: https://github.com/MayR-Labs/mayr_local_notifications
+repository: https://github.com/MayR-Labs/mayr_local_notifications
 
 environment:
   sdk: ^3.9.2
