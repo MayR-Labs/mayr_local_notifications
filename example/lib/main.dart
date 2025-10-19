@@ -1,21 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:mayr_local_notifications/mayr_local_notifications.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Request notification permission on Android 13+ and iOS
-  if (Platform.isAndroid || Platform.isIOS) {
-    final status = await Permission.notification.request();
-    if (status.isDenied) {
-      print('Notification permission denied');
-    }
-  }
 
   // Initialize MayR Local Notifications
   await MayrLocalNotifications.init(enableDebugLogs: true);
@@ -44,15 +34,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> checkPermissionStatus() async {
-    final status = await Permission.notification.status;
+    // Note: We can't check permission status without requesting it first
+    // This is a limitation of the current implementation
     setState(() {
-      _permissionGranted = status.isGranted;
-      if (!_permissionGranted) {
-        _statusMessage = 'Notification permission not granted. Please enable in settings.';
-      }
+      _statusMessage = 'Tap "Request Permission" to enable notifications';
     });
-  }
-    initPlatformState();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -78,22 +64,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _requestPermission() async {
-    final status = await Permission.notification.request();
+    final granted = await MayrLocalNotifications.requestPermission();
     setState(() {
-      _permissionGranted = status.isGranted;
-      if (status.isGranted) {
+      _permissionGranted = granted;
+      if (granted) {
         _statusMessage = 'Permission granted! You can now send notifications. ✅';
-      } else if (status.isPermanentlyDenied) {
-        _statusMessage = 'Permission permanently denied. Please enable in app settings. ⚠️';
       } else {
-        _statusMessage = 'Permission denied. ❌';
+        _statusMessage = 'Permission denied. Please enable notifications in device settings. ❌';
       }
     });
-    
-    // If permanently denied, open app settings
-    if (status.isPermanentlyDenied) {
-      await openAppSettings();
-    }
   }
 
   Future<void> _sendImmediateNotification() async {

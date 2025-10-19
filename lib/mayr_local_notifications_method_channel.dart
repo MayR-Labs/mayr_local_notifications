@@ -60,4 +60,10 @@ class MethodChannelMayrLocalNotifications extends MayrLocalNotificationsPlatform
   Future<void> cancelAll() async {
     await methodChannel.invokeMethod('cancelAll');
   }
+
+  @override
+  Future<bool> requestPermission() async {
+    final result = await methodChannel.invokeMethod<bool>('requestPermission');
+    return result ?? false;
+  }
 }

@@ -33,6 +33,9 @@ class MockMayrLocalNotificationsPlatform
 
   @override
   Future<void> cancelAll() => Future.value();
+
+  @override
+  Future<bool> requestPermission() => Future.value(true);
 }
 
 void main() {
@@ -84,5 +87,14 @@ void main() {
 
     // Should complete without error
     await MayrLocalNotifications.cancelAll();
+  });
+
+  test('requestPermission', () async {
+    MockMayrLocalNotificationsPlatform fakePlatform = MockMayrLocalNotificationsPlatform();
+    MayrLocalNotificationsPlatform.instance = fakePlatform;
+
+    // Should return true
+    final granted = await MayrLocalNotifications.requestPermission();
+    expect(granted, true);
   });
 }

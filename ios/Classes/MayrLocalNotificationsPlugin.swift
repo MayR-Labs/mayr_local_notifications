@@ -23,6 +23,8 @@ public class MayrLocalNotificationsPlugin: NSObject, FlutterPlugin {
       handleSchedule(call: call, result: result)
     case "cancelAll":
       handleCancelAll(result: result)
+    case "requestPermission":
+      handleRequestPermission(result: result)
     default:
       result(FlutterMethodNotImplemented)
     }
@@ -136,10 +138,40 @@ public class MayrLocalNotificationsPlugin: NSObject, FlutterPlugin {
     result(nil)
   }
   
+  private func handleRequestPermission(result: @escaping FlutterResult) {
+    log("Requesting notification permission")
+    
+    let center = UNUserNotificationCenter.current()
+    
+    // First check current authorization status
+    center.getNotificationSettings { settings in
+      switch settings.authorizationStatus {
+      case .authorized, .provisional, .ephemeral:
+        self.log("Permission already granted")
+        result(true)
+      case .denied:
+        self.log("Permission previously denied")
+        result(false)
+      case .notDetermined:
+        // Request permission
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+          if let error = error {
+            self.log("Permission error: \(error.localizedDescription)")
+            result(false)
+          } else {
+            self.log("Permission granted: \(granted)")
+            result(granted)
+          }
+        }
+      @unknown default:
+        result(false)
+      }
+    }
+  }
+  
   private func log(_ message: String) {
     if debugLogs {
       print("[MayrLocalNotifications] \(message)")
     }
   }
 }
-

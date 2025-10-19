@@ -1,5 +1,6 @@
 package com.mayrlabs.mayr_local_notifications
 
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,20 +9,26 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import io.flutter.plugin.common.PluginRegistry
 import java.util.concurrent.atomic.AtomicInteger
 
 /** MayrLocalNotificationsPlugin */
 class MayrLocalNotificationsPlugin :
     FlutterPlugin,
-    MethodCallHandler {
+    MethodCallHandler,
+    ActivityAware,
+    PluginRegistry.RequestPermissionsResultListener {
     
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
@@ -31,9 +38,12 @@ class MayrLocalNotificationsPlugin :
     private var channelDescription: String = "Default notification channel"
     private var debugLogs: Boolean = false
     private val notificationIdCounter = AtomicInteger(0)
+    private var activity: Activity? = null
+    private var permissionResult: Result? = null
 
     companion object {
         private const val TAG = "MayrLocalNotifications"
+        private const val PERMISSION_REQUEST_CODE = 8472
     }
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -62,6 +72,9 @@ class MayrLocalNotificationsPlugin :
             }
             "cancelAll" -> {
                 handleCancelAll(result)
+            }
+            "requestPermission" -> {
+                handleRequestPermission(result)
             }
             else -> {
                 result.notImplemented()
@@ -206,6 +219,59 @@ class MayrLocalNotificationsPlugin :
         }
     }
 
+    private fun handleRequestPermission(result: Result) {
+        try {
+            log("Requesting notification permission")
+
+            // For Android 13+ (API 33+), we need to request POST_NOTIFICATIONS permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val permission = android.Manifest.permission.POST_NOTIFICATIONS
+                
+                // Check if permission is already granted
+                if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
+                    log("Permission already granted")
+                    result.success(true)
+                    return
+                }
+
+                // Request permission if activity is available
+                if (activity != null) {
+                    permissionResult = result
+                    ActivityCompat.requestPermissions(
+                        activity!!,
+                        arrayOf(permission),
+                        PERMISSION_REQUEST_CODE
+                    )
+                } else {
+                    log("No activity available to request permission")
+                    result.success(false)
+                }
+            } else {
+                // For older Android versions, permissions are granted at install time
+                log("Android version < 13, permission granted by default")
+                result.success(true)
+            }
+        } catch (e: Exception) {
+            log("Error requesting permission: ${e.message}")
+            result.error("PERMISSION_ERROR", e.message, null)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ): Boolean {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            val granted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            log("Permission result: $granted")
+            permissionResult?.success(granted)
+            permissionResult = null
+            return true
+        }
+        return false
+    }
+
     private fun getSmallIconResourceId(): Int {
         // Try to get the app icon, fallback to a default system icon
         var resourceId = context.resources.getIdentifier("ic_notification", "drawable", context.packageName)
@@ -226,5 +292,25 @@ class MayrLocalNotificationsPlugin :
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
+    }
+
+    // ActivityAware implementation
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        activity = binding.activity
+        binding.addRequestPermissionsResultListener(this)
+        log("Attached to activity")
+    }
+
+    override fun onDetachedFromActivityForConfigChanges() {
+        activity = null
+    }
+
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        activity = binding.activity
+        binding.addRequestPermissionsResultListener(this)
+    }
+
+    override fun onDetachedFromActivity() {
+        activity = null
     }
 }

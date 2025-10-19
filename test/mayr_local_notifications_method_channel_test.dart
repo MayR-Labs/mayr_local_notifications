@@ -15,6 +15,8 @@ void main() {
         switch (methodCall.method) {
           case 'getPlatformVersion':
             return '42';
+          case 'requestPermission':
+            return true;
           case 'init':
           case 'send':
           case 'schedule':
@@ -60,5 +62,11 @@ void main() {
   test('cancelAll', () async {
     // Should complete without error
     await platform.cancelAll();
+  });
+
+  test('requestPermission', () async {
+    // Should return true
+    final granted = await platform.requestPermission();
+    expect(granted, true);
   });
 }
