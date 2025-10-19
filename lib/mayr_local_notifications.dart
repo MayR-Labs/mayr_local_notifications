@@ -108,6 +108,28 @@ class MayrLocalNotifications {
     return MayrLocalNotificationsPlatform.instance.cancelAll();
   }
 
+  /// Request notification permissions
+  ///
+  /// Requests notification permissions from the user if not already granted.
+  /// Returns true if permission is granted, false otherwise.
+  ///
+  /// On Android 13+ (API 33+), this will show the system permission dialog.
+  /// On iOS/macOS, this will request notification authorization.
+  /// On older Android versions, this will return true as permissions are granted at install time.
+  ///
+  /// Example:
+  /// ```dart
+  /// final granted = await MayrLocalNotifications.requestPermission();
+  /// if (granted) {
+  ///   print('Permission granted!');
+  /// } else {
+  ///   print('Permission denied');
+  /// }
+  /// ```
+  static Future<bool> requestPermission() {
+    return MayrLocalNotificationsPlatform.instance.requestPermission();
+  }
+
   /// Get the platform version (for debugging)
   Future<String?> getPlatformVersion() {
     return MayrLocalNotificationsPlatform.instance.getPlatformVersion();

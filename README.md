@@ -57,26 +57,24 @@ flutter pub get
 </manifest>
 ```
 
-**For Android 13+ (API 33+)**: You'll also need to request notification permission at runtime. Add the `permission_handler` package to your `pubspec.yaml`:
-
-```yaml
-dependencies:
-  permission_handler: ^11.0.0
-```
-
-Then request permission in your app:
+**For Android 13+ (API 33+)**: You'll also need to request notification permission at runtime. The plugin provides a built-in method for this:
 
 ```dart
-import 'package:permission_handler/permission_handler.dart';
-
-Future<void> requestNotificationPermission() async {
-  if (await Permission.notification.isDenied) {
-    await Permission.notification.request();
-  }
+// Request permission before sending notifications
+final granted = await MayrLocalNotifications.requestPermission();
+if (granted) {
+  // Permission granted, you can now send notifications
+  print('Permission granted!');
+} else {
+  // Permission denied
+  print('Permission denied');
 }
 ```
 
-Call this before initializing the plugin on Android 13+.
+This method will:
+- Show the system permission dialog on Android 13+
+- Return `true` if permission is already granted on older Android versions
+- Handle iOS/macOS permission requests automatically
 
 ### 2. Initialize in your main.dart
 
@@ -201,6 +199,34 @@ Cancel all pending scheduled notifications.
 **Example:**
 ```dart
 await MayrLocalNotifications.cancelAll();
+```
+
+---
+
+### MayrLocalNotifications.requestPermission()
+
+Request notification permissions from the user.
+
+Returns `true` if permission is granted, `false` otherwise.
+
+**Platform Behavior:**
+- **Android 13+ (API 33+)**: Shows the system permission dialog
+- **Android < 13**: Returns `true` (permissions granted at install time)
+- **iOS/macOS**: Requests notification authorization or returns current status
+
+**Example:**
+```dart
+final granted = await MayrLocalNotifications.requestPermission();
+if (granted) {
+  print('Permission granted!');
+  await MayrLocalNotifications.send(
+    title: 'Test',
+    body: 'Notifications are now enabled!',
+  );
+} else {
+  print('Permission denied');
+  // Show user a message to enable notifications in settings
+}
 ```
 
 ---

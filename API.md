@@ -11,6 +11,7 @@ Complete API reference for the `mayr_local_notifications` Flutter plugin.
   - [send()](#send)
   - [schedule()](#schedule)
   - [cancelAll()](#cancelall)
+  - [requestPermission()](#requestpermission)
   - [getPlatformVersion()](#getplatformversion)
 
 ---
@@ -231,6 +232,76 @@ await MayrLocalNotifications.cancelAll();
 **Notes:**
 - This only cancels scheduled notifications, not those already displayed.
 - Already shown notifications remain in the notification center.
+
+---
+
+### requestPermission()
+
+Request notification permissions from the user.
+
+**Signature:**
+```dart
+static Future<bool> requestPermission()
+```
+
+**Parameters:** None
+
+**Returns:** `Future<bool>` - Returns `true` if permission is granted, `false` otherwise.
+
+**Throws:** May throw a `PlatformException` if the request fails.
+
+**Example:**
+```dart
+// Request permission before sending notifications
+final granted = await MayrLocalNotifications.requestPermission();
+if (granted) {
+  print('Permission granted!');
+  await MayrLocalNotifications.send(
+    title: 'Test',
+    body: 'You can now receive notifications!',
+  );
+} else {
+  print('Permission denied. Please enable notifications in settings.');
+}
+
+// With user feedback
+Future<void> setupNotifications() async {
+  final granted = await MayrLocalNotifications.requestPermission();
+  
+  if (!granted) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Notifications Disabled'),
+        content: Text('Please enable notifications in your device settings.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+**Platform-Specific Behavior:**
+
+- **Android 13+ (API 33+)**: Shows the system permission dialog. User can grant or deny. Returns the result immediately.
+- **Android < 13**: Returns `true` as permissions are granted at install time (no runtime permission needed).
+- **iOS/macOS**: Shows the system authorization dialog if permission hasn't been determined yet. Returns the current or newly granted authorization status.
+
+**Notes:**
+- On iOS/macOS, once a user denies permission, calling this method again will return `false` without showing the dialog. Users must enable notifications in Settings.
+- This method can be called multiple times safely. It checks the current permission status first.
+- It's recommended to call this method before sending your first notification, especially on Android 13+.
+- You can call this method during app initialization or just before sending a notification.
+
+**When to use:**
+- Call this method when your app first needs to send notifications
+- Call it in response to a user action (e.g., "Enable Notifications" button)
+- Call it after app initialization if notifications are a core feature
 
 ---
 

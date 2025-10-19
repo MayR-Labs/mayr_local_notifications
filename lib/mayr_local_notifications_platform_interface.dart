@@ -57,4 +57,9 @@ abstract class MayrLocalNotificationsPlatform extends PlatformInterface {
   Future<void> cancelAll() {
     throw UnimplementedError('cancelAll() has not been implemented.');
   }
+
+  /// Request notification permissions
+  Future<bool> requestPermission() {
+    throw UnimplementedError('requestPermission() has not been implemented.');
+  }
 }
