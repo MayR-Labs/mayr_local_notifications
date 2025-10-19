@@ -8,6 +8,12 @@
         android:label="mayr_local_notifications_example"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        
+        <!-- BroadcastReceiver for scheduled notifications -->
+        <receiver 
+            android:name="com.mayrlabs.mayr_local_notifications.NotificationReceiver"
+            android:exported="false" />
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"

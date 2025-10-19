@@ -35,7 +35,50 @@ flutter pub get
 
 ## 🪄 Quick Start
 
-### 1. Initialize in your main.dart
+### 1. Platform Setup (Android only)
+
+**For Android apps**, you need to add a few entries to your `AndroidManifest.xml`. Add this to `android/app/src/main/AndroidManifest.xml`:
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Add these permissions before <application> -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    
+    <application ...>
+        <!-- Add this receiver inside <application> for scheduled notifications -->
+        <receiver 
+            android:name="com.mayrlabs.mayr_local_notifications.NotificationReceiver"
+            android:exported="false" />
+        
+        <!-- Your activities and other components -->
+    </application>
+</manifest>
+```
+
+**For Android 13+ (API 33+)**: You'll also need to request notification permission at runtime. Add the `permission_handler` package to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  permission_handler: ^11.0.0
+```
+
+Then request permission in your app:
+
+```dart
+import 'package:permission_handler/permission_handler.dart';
+
+Future<void> requestNotificationPermission() async {
+  if (await Permission.notification.isDenied) {
+    await Permission.notification.request();
+  }
+}
+```
+
+Call this before initializing the plugin on Android 13+.
+
+### 2. Initialize in your main.dart
 
 Import and initialize the plugin before running your app:
 
@@ -53,7 +96,7 @@ void main() async {
 }
 ```
 
-### 2. Send an immediate notification
+### 3. Send an immediate notification
 
 Show a notification right away:
 
@@ -64,7 +107,7 @@ await MayrLocalNotifications.send(
 );
 ```
 
-### 3. Schedule a notification
+### 4. Schedule a notification
 
 Schedule a notification for later:
 
@@ -76,7 +119,7 @@ await MayrLocalNotifications.schedule(
 );
 ```
 
-### 4. Cancel all notifications
+### 5. Cancel all notifications
 
 Remove all pending scheduled notifications:
 
@@ -166,11 +209,33 @@ await MayrLocalNotifications.cancelAll();
 
 ### Android
 
-**Permissions:**
+**Required Setup:**
 
-The plugin automatically handles notification permissions. However, for Android 13+ (API level 33+), your app should request the `POST_NOTIFICATIONS` permission. The plugin will handle this automatically when you call `init()` with `requestPermissions: true` (which is the default).
+Add the following to your app's `android/app/src/main/AndroidManifest.xml`:
 
-No changes to `AndroidManifest.xml` are required for basic functionality. The plugin automatically creates a default notification channel.
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Add these permissions inside the <manifest> tag, before <application> -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    
+    <application ...>
+        <!-- Add this receiver inside the <application> tag for scheduled notifications -->
+        <receiver 
+            android:name="com.mayrlabs.mayr_local_notifications.NotificationReceiver"
+            android:exported="false" />
+        
+        <!-- Your other app components (activities, etc.) -->
+    </application>
+</manifest>
+```
+
+**Permissions Explained:**
+- `POST_NOTIFICATIONS`: Required for Android 13+ (API 33+) to show notifications
+- `SCHEDULE_EXACT_ALARM` & `USE_EXACT_ALARM`: Required for precise scheduling of notifications
+
+**Note:** The plugin automatically creates a default notification channel and requests runtime permissions on Android 13+.
 
 **Custom Icon (Optional):**
 
@@ -246,21 +311,71 @@ Perfect for:
 
 ### Notifications not appearing on Android
 
-1. Ensure your app has notification permissions (automatically requested on Android 13+)
-2. Check that Do Not Disturb is not enabled on the device
-3. Enable debug logs to see what's happening:
+**Common causes and solutions:**
+
+1. **Missing AndroidManifest.xml setup** (Most common!)
+   - Ensure you added the `<receiver>` tag to your `android/app/src/main/AndroidManifest.xml`
+   - Ensure you added the permission tags (`POST_NOTIFICATIONS`, `SCHEDULE_EXACT_ALARM`, `USE_EXACT_ALARM`)
+   - See the [Platform-Specific Setup](#-platform-specific-setup) section above
+
+2. **Permission not granted (Android 13+)**
+   - The app must request `POST_NOTIFICATIONS` permission at runtime
+   - Use the `permission_handler` package to request permissions
+   - Check if permission is granted: Go to Settings > Apps > Your App > Notifications
+   
+   ```dart
+   import 'package:permission_handler/permission_handler.dart';
+   
+   Future<void> checkAndRequestPermission() async {
+     final status = await Permission.notification.status;
+     if (!status.isGranted) {
+       await Permission.notification.request();
+     }
+   }
+   ```
+
+3. **Do Not Disturb mode**
+   - Check that Do Not Disturb is not enabled on the device
+   - Check notification settings for your app in device Settings
+
+4. **Enable debug logs** to see what's happening:
    ```dart
    await MayrLocalNotifications.init(enableDebugLogs: true);
    ```
+   Then check Android Studio's Logcat for `[MayrLocalNotifications]` messages
+
+5. **Test with immediate notifications first**
+   - If immediate notifications don't work, scheduled notifications won't work either
+   - Fix immediate notifications before testing scheduled ones
 
 ### Notifications not appearing on iOS/macOS
 
-1. Ensure notification permissions are granted (check in Settings)
-2. Make sure the app is in the background or device is locked when testing
-3. Enable debug logs to troubleshoot:
+1. **Permission not granted**
+   - Check Settings > Your App > Notifications
+   - Ensure notifications are enabled for your app
+
+2. **App in foreground**
+   - iOS/macOS won't show notification banners when the app is in the foreground
+   - Test by sending app to background or locking device
+
+3. **Enable debug logs** to troubleshoot:
    ```dart
    await MayrLocalNotifications.init(enableDebugLogs: true);
    ```
+
+### Scheduled notifications not working
+
+1. **Ensure the BroadcastReceiver is registered** (Android only)
+   - Check that you added the `<receiver>` tag in AndroidManifest.xml
+   - The receiver must be inside the `<application>` tag
+
+2. **Check exact alarm permissions** (Android 12+)
+   - Some devices require special permissions for exact alarms
+   - Add `SCHEDULE_EXACT_ALARM` permission to AndroidManifest.xml
+
+3. **Battery optimization**
+   - Some devices may kill background processes
+   - Check device battery optimization settings for your app
 
 ---
 

@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:mayr_local_notifications/mayr_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Request notification permission on Android 13+ and iOS
+  if (Platform.isAndroid || Platform.isIOS) {
+    final status = await Permission.notification.request();
+    if (status.isDenied) {
+      print('Notification permission denied');
+    }
+  }
 
   // Initialize MayR Local Notifications
   await MayrLocalNotifications.init(enableDebugLogs: true);
@@ -23,11 +33,25 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   String _statusMessage = 'Ready to send notifications';
+  bool _permissionGranted = false;
   final _mayrLocalNotificationsPlugin = MayrLocalNotifications();
 
   @override
   void initState() {
     super.initState();
+    initPlatformState();
+    checkPermissionStatus();
+  }
+
+  Future<void> checkPermissionStatus() async {
+    final status = await Permission.notification.status;
+    setState(() {
+      _permissionGranted = status.isGranted;
+      if (!_permissionGranted) {
+        _statusMessage = 'Notification permission not granted. Please enable in settings.';
+      }
+    });
+  }
     initPlatformState();
   }
 
@@ -51,6 +75,25 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _platformVersion = platformVersion;
     });
+  }
+
+  Future<void> _requestPermission() async {
+    final status = await Permission.notification.request();
+    setState(() {
+      _permissionGranted = status.isGranted;
+      if (status.isGranted) {
+        _statusMessage = 'Permission granted! You can now send notifications. ✅';
+      } else if (status.isPermanentlyDenied) {
+        _statusMessage = 'Permission permanently denied. Please enable in app settings. ⚠️';
+      } else {
+        _statusMessage = 'Permission denied. ❌';
+      }
+    });
+    
+    // If permanently denied, open app settings
+    if (status.isPermanentlyDenied) {
+      await openAppSettings();
+    }
   }
 
   Future<void> _sendImmediateNotification() async {
@@ -129,6 +172,34 @@ class _MyAppState extends State<MyApp> {
                 ),
                 const SizedBox(height: 10),
                 Text('Running on: $_platformVersion', style: Theme.of(context).textTheme.bodySmall),
+                const SizedBox(height: 10),
+                // Permission status indicator
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _permissionGranted ? Colors.green.shade100 : Colors.red.shade100,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        _permissionGranted ? Icons.check_circle : Icons.warning,
+                        size: 16,
+                        color: _permissionGranted ? Colors.green.shade700 : Colors.red.shade700,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        _permissionGranted ? 'Permission Granted' : 'Permission Denied',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: _permissionGranted ? Colors.green.shade700 : Colors.red.shade700,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 30),
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -143,6 +214,19 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ),
                 const SizedBox(height: 40),
+                // Show request permission button if permission not granted
+                if (!_permissionGranted)
+                  ElevatedButton.icon(
+                    onPressed: _requestPermission,
+                    icon: const Icon(Icons.settings),
+                    label: const Text('Request Permission'),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                if (!_permissionGranted) const SizedBox(height: 16),
                 ElevatedButton.icon(
                   onPressed: _sendImmediateNotification,
                   icon: const Icon(Icons.send),
