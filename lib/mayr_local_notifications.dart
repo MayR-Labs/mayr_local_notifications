@@ -43,11 +43,14 @@ class MayrLocalNotifications {
   /// Send an immediate notification
   ///
   /// Displays a notification immediately.
+  /// Automatically requests permission if not already granted.
   ///
   /// Parameters:
   /// - [title]: The notification title
   /// - [body]: The notification body text
   /// - [payload]: Optional custom data to include with the notification
+  ///
+  /// Throws a [PermissionDeniedException] if permission is denied.
   ///
   /// Example:
   /// ```dart
@@ -60,19 +63,28 @@ class MayrLocalNotifications {
     required String title,
     required String body,
     Map<String, dynamic>? payload,
-  }) {
+  }) async {
+    // Automatically request permission if not granted
+    final granted = await requestPermission();
+    if (!granted) {
+      throw Exception('Notification permission denied. Please enable notifications in settings.');
+    }
+    
     return MayrLocalNotificationsPlatform.instance.send(title: title, body: body, payload: payload);
   }
 
   /// Schedule a notification for a specific time
   ///
   /// Schedules a notification to be displayed at the specified DateTime.
+  /// Automatically requests permission if not already granted.
   ///
   /// Parameters:
   /// - [title]: The notification title
   /// - [body]: The notification body text
   /// - [at]: The DateTime when the notification should be displayed
   /// - [payload]: Optional custom data to include with the notification
+  ///
+  /// Throws a [PermissionDeniedException] if permission is denied.
   ///
   /// Example:
   /// ```dart
@@ -87,7 +99,13 @@ class MayrLocalNotifications {
     required String body,
     required DateTime at,
     Map<String, dynamic>? payload,
-  }) {
+  }) async {
+    // Automatically request permission if not granted
+    final granted = await requestPermission();
+    if (!granted) {
+      throw Exception('Notification permission denied. Please enable notifications in settings.');
+    }
+    
     return MayrLocalNotificationsPlatform.instance.schedule(
       title: title,
       body: body,

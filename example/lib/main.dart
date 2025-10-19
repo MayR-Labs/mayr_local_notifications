@@ -34,10 +34,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> checkPermissionStatus() async {
-    // Note: We can't check permission status without requesting it first
-    // This is a limitation of the current implementation
+    // Permission is now automatically requested when sending/scheduling notifications
     setState(() {
-      _statusMessage = 'Tap "Request Permission" to enable notifications';
+      _statusMessage = 'Ready to send notifications! Permission will be requested automatically.';
     });
   }
 
@@ -83,11 +82,13 @@ class _MyAppState extends State<MyApp> {
         payload: {'type': 'immediate', 'timestamp': DateTime.now().toString()},
       );
       setState(() {
+        _permissionGranted = true; // Permission was granted if send succeeded
         _statusMessage = 'Immediate notification sent! ✅';
       });
     } catch (e) {
       setState(() {
-        _statusMessage = 'Error: $e ❌';
+        _permissionGranted = false;
+        _statusMessage = 'Error: ${e.toString().contains('permission') ? 'Permission denied. Please enable notifications in settings.' : e} ❌';
       });
     }
   }
@@ -102,11 +103,13 @@ class _MyAppState extends State<MyApp> {
         payload: {'type': 'scheduled', 'scheduledFor': scheduledTime.toString()},
       );
       setState(() {
+        _permissionGranted = true; // Permission was granted if schedule succeeded
         _statusMessage = 'Notification scheduled for 10 seconds from now! ⏰';
       });
     } catch (e) {
       setState(() {
-        _statusMessage = 'Error: $e ❌';
+        _permissionGranted = false;
+        _statusMessage = 'Error: ${e.toString().contains('permission') ? 'Permission denied. Please enable notifications in settings.' : e} ❌';
       });
     }
   }

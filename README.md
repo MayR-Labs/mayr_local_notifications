@@ -57,24 +57,9 @@ flutter pub get
 </manifest>
 ```
 
-**For Android 13+ (API 33+)**: You'll also need to request notification permission at runtime. The plugin provides a built-in method for this:
+**Permissions are handled automatically!** 
 
-```dart
-// Request permission before sending notifications
-final granted = await MayrLocalNotifications.requestPermission();
-if (granted) {
-  // Permission granted, you can now send notifications
-  print('Permission granted!');
-} else {
-  // Permission denied
-  print('Permission denied');
-}
-```
-
-This method will:
-- Show the system permission dialog on Android 13+
-- Return `true` if permission is already granted on older Android versions
-- Handle iOS/macOS permission requests automatically
+When you call `send()` or `schedule()`, the plugin will automatically request permission if needed. You don't need to manually call `requestPermission()` unless you want to request permission upfront.
 
 ### 2. Initialize in your main.dart
 
@@ -96,7 +81,7 @@ void main() async {
 
 ### 3. Send an immediate notification
 
-Show a notification right away:
+Show a notification right away. Permission is requested automatically if needed:
 
 ```dart
 await MayrLocalNotifications.send(
@@ -107,7 +92,7 @@ await MayrLocalNotifications.send(
 
 ### 4. Schedule a notification
 
-Schedule a notification for later:
+Schedule a notification for later. Permission is requested automatically if needed:
 
 ```dart
 await MayrLocalNotifications.schedule(
@@ -155,10 +140,14 @@ await MayrLocalNotifications.init(
 
 Send an immediate notification.
 
+**Automatic Permission Handling:** This method automatically requests notification permission if not already granted.
+
 **Parameters:**
 - `title` (String, required): The notification title
 - `body` (String, required): The notification body text
 - `payload` (Map<String, dynamic>, optional): Custom data to attach to the notification
+
+**Throws:** Exception if permission is denied by the user.
 
 **Example:**
 ```dart
@@ -175,11 +164,15 @@ await MayrLocalNotifications.send(
 
 Schedule a notification for a specific time.
 
+**Automatic Permission Handling:** This method automatically requests notification permission if not already granted.
+
 **Parameters:**
 - `title` (String, required): The notification title
 - `body` (String, required): The notification body text
 - `at` (DateTime, required): When to show the notification
 - `payload` (Map<String, dynamic>, optional): Custom data to attach to the notification
+
+**Throws:** Exception if permission is denied by the user.
 
 **Example:**
 ```dart
@@ -207,6 +200,8 @@ await MayrLocalNotifications.cancelAll();
 
 Request notification permissions from the user.
 
+**Note:** You typically don't need to call this method directly, as `send()` and `schedule()` automatically request permission if needed. Use this method if you want to request permission upfront (e.g., during onboarding).
+
 Returns `true` if permission is granted, `false` otherwise.
 
 **Platform Behavior:**
@@ -216,17 +211,20 @@ Returns `true` if permission is granted, `false` otherwise.
 
 **Example:**
 ```dart
+// Optional: Request permission upfront during onboarding
 final granted = await MayrLocalNotifications.requestPermission();
 if (granted) {
   print('Permission granted!');
-  await MayrLocalNotifications.send(
-    title: 'Test',
-    body: 'Notifications are now enabled!',
-  );
 } else {
   print('Permission denied');
   // Show user a message to enable notifications in settings
 }
+
+// Or just send directly - permission is requested automatically!
+await MayrLocalNotifications.send(
+  title: 'Test',
+  body: 'Notifications work!',
+);
 ```
 
 ---

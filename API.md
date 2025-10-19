@@ -93,6 +93,8 @@ await MayrLocalNotifications.init(
 
 Send an immediate notification that appears right away.
 
+**Automatic Permission Handling:** This method automatically requests notification permission if not already granted. You don't need to call `requestPermission()` manually.
+
 **Signature:**
 ```dart
 static Future<void> send({
@@ -112,11 +114,13 @@ static Future<void> send({
 
 **Returns:** `Future<void>`
 
-**Throws:** May throw a `PlatformException` if the notification fails to send.
+**Throws:** 
+- `Exception` if notification permission is denied by the user
+- `PlatformException` if the notification fails to send for other reasons
 
 **Example:**
 ```dart
-// Simple notification
+// Simple notification - permission requested automatically if needed
 await MayrLocalNotifications.send(
   title: 'Hello!',
   body: 'Welcome to our app!',
@@ -132,18 +136,31 @@ await MayrLocalNotifications.send(
     'timestamp': DateTime.now().toIso8601String(),
   },
 );
+
+// With error handling
+try {
+  await MayrLocalNotifications.send(
+    title: 'Test',
+    body: 'Testing notifications',
+  );
+} catch (e) {
+  print('Failed to send notification: $e');
+  // Handle permission denial or other errors
+}
 ```
 
 **Platform-Specific Behavior:**
 
-- **Android**: Uses NotificationCompat to create and display the notification immediately.
-- **iOS/macOS**: Uses UNNotificationRequest with a minimal trigger delay (0.1 seconds).
+- **Android**: Uses NotificationCompat to create and display the notification immediately. Requests POST_NOTIFICATIONS permission on Android 13+ if not granted.
+- **iOS/macOS**: Uses UNNotificationRequest with a minimal trigger delay (0.1 seconds). Requests authorization if not determined.
 
 ---
 
 ### schedule()
 
 Schedule a notification to appear at a specific date and time.
+
+**Automatic Permission Handling:** This method automatically requests notification permission if not already granted. You don't need to call `requestPermission()` manually.
 
 **Signature:**
 ```dart
@@ -167,12 +184,13 @@ static Future<void> schedule({
 **Returns:** `Future<void>`
 
 **Throws:** 
+- `Exception` if notification permission is denied by the user
 - `PlatformException` if scheduling fails
 - `ArgumentError` if the scheduled time is in the past
 
 **Example:**
 ```dart
-// Schedule for a specific time
+// Schedule for a specific time - permission requested automatically if needed
 await MayrLocalNotifications.schedule(
   title: 'Meeting Reminder',
   body: 'Your meeting starts in 15 minutes',
@@ -239,6 +257,8 @@ await MayrLocalNotifications.cancelAll();
 
 Request notification permissions from the user.
 
+**Note:** You typically don't need to call this method directly, as `send()` and `schedule()` automatically request permission if needed. Use this method only if you want to request permission upfront (e.g., during app onboarding) or check permission status explicitly.
+
 **Signature:**
 ```dart
 static Future<bool> requestPermission()
@@ -252,19 +272,22 @@ static Future<bool> requestPermission()
 
 **Example:**
 ```dart
-// Request permission before sending notifications
+// Optional: Request permission upfront during onboarding
 final granted = await MayrLocalNotifications.requestPermission();
 if (granted) {
   print('Permission granted!');
-  await MayrLocalNotifications.send(
-    title: 'Test',
-    body: 'You can now receive notifications!',
-  );
 } else {
   print('Permission denied. Please enable notifications in settings.');
 }
 
-// With user feedback
+// Alternatively, just call send() or schedule() directly
+// Permission will be requested automatically if needed
+await MayrLocalNotifications.send(
+  title: 'Test',
+  body: 'You can now receive notifications!',
+);
+
+// With user feedback during onboarding
 Future<void> setupNotifications() async {
   final granted = await MayrLocalNotifications.requestPermission();
   
