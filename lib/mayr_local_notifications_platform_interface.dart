@@ -39,11 +39,7 @@ abstract class MayrLocalNotificationsPlatform extends PlatformInterface {
   }
 
   /// Send an immediate notification
-  Future<void> send({
-    required String title,
-    required String body,
-    Map<String, dynamic>? payload,
-  }) {
+  Future<void> send({required String title, required String body, Map<String, dynamic>? payload}) {
     throw UnimplementedError('send() has not been implemented.');
   }
 

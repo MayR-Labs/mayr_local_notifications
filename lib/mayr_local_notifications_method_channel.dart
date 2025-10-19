@@ -38,11 +38,7 @@ class MethodChannelMayrLocalNotifications extends MayrLocalNotificationsPlatform
     required String body,
     Map<String, dynamic>? payload,
   }) async {
-    await methodChannel.invokeMethod('send', {
-      'title': title,
-      'body': body,
-      'payload': payload,
-    });
+    await methodChannel.invokeMethod('send', {'title': title, 'body': body, 'payload': payload});
   }
 
   @override

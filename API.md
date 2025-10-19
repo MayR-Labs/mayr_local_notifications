@@ -1,0 +1,377 @@
+# MayR Local Notifications - API Documentation
+
+Complete API reference for the `mayr_local_notifications` Flutter plugin.
+
+## Table of Contents
+
+- [Classes](#classes)
+  - [MayrLocalNotifications](#mayrlocalnotifications)
+- [Methods](#methods)
+  - [init()](#init)
+  - [send()](#send)
+  - [schedule()](#schedule)
+  - [cancelAll()](#cancelall)
+  - [getPlatformVersion()](#getplatformversion)
+
+---
+
+## Classes
+
+### MayrLocalNotifications
+
+The main entry point for using local notifications in your Flutter application.
+
+**Type:** Static class
+
+**Example:**
+```dart
+import 'package:mayr_local_notifications/mayr_local_notifications.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await MayrLocalNotifications.init();
+  runApp(MyApp());
+}
+```
+
+---
+
+## Methods
+
+### init()
+
+Initialize the notification system. This method should be called once before using any other notification methods, typically in your `main()` function.
+
+**Signature:**
+```dart
+static Future<void> init({
+  String? channelId,
+  String? channelName,
+  String? channelDescription,
+  bool requestPermissions = true,
+  bool enableDebugLogs = false,
+})
+```
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `channelId` | `String?` | No | `'mayr_default_channel'` | Custom notification channel ID (Android only) |
+| `channelName` | `String?` | No | `'MayR Notifications'` | Custom notification channel name (Android only) |
+| `channelDescription` | `String?` | No | `'Default notification channel'` | Custom notification channel description (Android only) |
+| `requestPermissions` | `bool` | No | `true` | Whether to automatically request notification permissions |
+| `enableDebugLogs` | `bool` | No | `false` | Enable debug logging for troubleshooting |
+
+**Returns:** `Future<void>`
+
+**Throws:** May throw a `PlatformException` if initialization fails.
+
+**Example:**
+```dart
+// Basic initialization with defaults
+await MayrLocalNotifications.init();
+
+// Custom initialization with debug logs
+await MayrLocalNotifications.init(
+  channelId: 'my_app_channel',
+  channelName: 'My App Notifications',
+  channelDescription: 'Notifications from My App',
+  enableDebugLogs: true,
+);
+```
+
+**Platform-Specific Behavior:**
+
+- **Android**: Creates a notification channel with the specified ID and name. Requests POST_NOTIFICATIONS permission on Android 13+.
+- **iOS/macOS**: Requests notification authorization with alert, sound, and badge options.
+
+---
+
+### send()
+
+Send an immediate notification that appears right away.
+
+**Signature:**
+```dart
+static Future<void> send({
+  required String title,
+  required String body,
+  Map<String, dynamic>? payload,
+})
+```
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `title` | `String` | Yes | - | The notification title |
+| `body` | `String` | Yes | - | The notification body text |
+| `payload` | `Map<String, dynamic>?` | No | `null` | Optional custom data to attach to the notification |
+
+**Returns:** `Future<void>`
+
+**Throws:** May throw a `PlatformException` if the notification fails to send.
+
+**Example:**
+```dart
+// Simple notification
+await MayrLocalNotifications.send(
+  title: 'Hello!',
+  body: 'Welcome to our app!',
+);
+
+// Notification with payload
+await MayrLocalNotifications.send(
+  title: 'New Message',
+  body: 'You have a new message from John',
+  payload: {
+    'type': 'message',
+    'senderId': 'john123',
+    'timestamp': DateTime.now().toIso8601String(),
+  },
+);
+```
+
+**Platform-Specific Behavior:**
+
+- **Android**: Uses NotificationCompat to create and display the notification immediately.
+- **iOS/macOS**: Uses UNNotificationRequest with a minimal trigger delay (0.1 seconds).
+
+---
+
+### schedule()
+
+Schedule a notification to appear at a specific date and time.
+
+**Signature:**
+```dart
+static Future<void> schedule({
+  required String title,
+  required String body,
+  required DateTime at,
+  Map<String, dynamic>? payload,
+})
+```
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `title` | `String` | Yes | - | The notification title |
+| `body` | `String` | Yes | - | The notification body text |
+| `at` | `DateTime` | Yes | - | The date and time when the notification should appear |
+| `payload` | `Map<String, dynamic>?` | No | `null` | Optional custom data to attach to the notification |
+
+**Returns:** `Future<void>`
+
+**Throws:** 
+- `PlatformException` if scheduling fails
+- `ArgumentError` if the scheduled time is in the past
+
+**Example:**
+```dart
+// Schedule for a specific time
+await MayrLocalNotifications.schedule(
+  title: 'Meeting Reminder',
+  body: 'Your meeting starts in 15 minutes',
+  at: DateTime(2025, 10, 20, 14, 45), // October 20, 2025 at 2:45 PM
+);
+
+// Schedule relative to current time
+await MayrLocalNotifications.schedule(
+  title: 'Take a Break',
+  body: 'Time for a 5-minute break!',
+  at: DateTime.now().add(const Duration(hours: 1)),
+  payload: {
+    'type': 'reminder',
+    'category': 'health',
+  },
+);
+```
+
+**Platform-Specific Behavior:**
+
+- **Android**: Uses AlarmManager with `setExactAndAllowWhileIdle()` for reliable delivery.
+- **iOS/macOS**: Uses UNNotificationRequest with a time interval trigger.
+
+**Notes:**
+- The scheduled time must be in the future. Past times will be rejected.
+- Scheduled notifications persist across app restarts (platform-dependent).
+- On Android, the app may need exact alarm permissions for precise timing.
+
+---
+
+### cancelAll()
+
+Cancel all pending scheduled notifications. This removes all notifications that haven't been displayed yet.
+
+**Signature:**
+```dart
+static Future<void> cancelAll()
+```
+
+**Parameters:** None
+
+**Returns:** `Future<void>`
+
+**Throws:** May throw a `PlatformException` if cancellation fails.
+
+**Example:**
+```dart
+// Cancel all pending notifications
+await MayrLocalNotifications.cancelAll();
+```
+
+**Platform-Specific Behavior:**
+
+- **Android**: Calls `NotificationManager.cancelAll()` to remove all notifications.
+- **iOS/macOS**: Calls `UNUserNotificationCenter.removeAllPendingNotificationRequests()`.
+
+**Notes:**
+- This only cancels scheduled notifications, not those already displayed.
+- Already shown notifications remain in the notification center.
+
+---
+
+### getPlatformVersion()
+
+Get the platform version string. This is primarily useful for debugging and testing.
+
+**Signature:**
+```dart
+Future<String?> getPlatformVersion()
+```
+
+**Parameters:** None
+
+**Returns:** `Future<String?>` - A string describing the platform and version, e.g., "Android 13" or "iOS 16.0"
+
+**Example:**
+```dart
+final plugin = MayrLocalNotifications();
+final version = await plugin.getPlatformVersion();
+print('Running on: $version');
+// Output: "Running on: Android 13" or "iOS 16.0"
+```
+
+**Notes:**
+- This is an instance method, unlike the other static methods.
+- Primarily used for debugging and testing purposes.
+
+---
+
+## Usage Patterns
+
+### Basic Setup
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:mayr_local_notifications/mayr_local_notifications.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await MayrLocalNotifications.init();
+  runApp(MyApp());
+}
+```
+
+### Reminder App Pattern
+
+```dart
+class ReminderService {
+  static Future<void> setReminder({
+    required String title,
+    required String message,
+    required DateTime when,
+  }) async {
+    await MayrLocalNotifications.schedule(
+      title: title,
+      body: message,
+      at: when,
+      payload: {
+        'type': 'reminder',
+        'timestamp': when.toIso8601String(),
+      },
+    );
+  }
+  
+  static Future<void> clearAllReminders() async {
+    await MayrLocalNotifications.cancelAll();
+  }
+}
+```
+
+### Notification with Error Handling
+
+```dart
+Future<void> sendNotificationSafely() async {
+  try {
+    await MayrLocalNotifications.send(
+      title: 'Important Update',
+      body: 'Your data has been synced successfully',
+    );
+    print('Notification sent successfully');
+  } on PlatformException catch (e) {
+    print('Failed to send notification: ${e.message}');
+    // Handle error (e.g., show in-app message)
+  }
+}
+```
+
+---
+
+## Error Handling
+
+All methods may throw `PlatformException` in case of errors. Common error codes:
+
+| Code | Description | Solution |
+|------|-------------|----------|
+| `INIT_ERROR` | Initialization failed | Check permissions and platform compatibility |
+| `SEND_ERROR` | Failed to send notification | Verify notification permissions are granted |
+| `SCHEDULE_ERROR` | Failed to schedule notification | Check that the scheduled time is valid |
+| `CANCEL_ERROR` | Failed to cancel notifications | Rare; usually indicates a platform issue |
+| `INVALID_ARGS` | Invalid arguments provided | Check that all required parameters are provided |
+| `INVALID_TIME` | Scheduled time is in the past | Use a future DateTime |
+
+**Example:**
+```dart
+try {
+  await MayrLocalNotifications.schedule(
+    title: 'Test',
+    body: 'Test',
+    at: DateTime.now().subtract(Duration(hours: 1)), // Past time
+  );
+} on PlatformException catch (e) {
+  if (e.code == 'INVALID_TIME') {
+    print('Cannot schedule notifications in the past');
+  }
+}
+```
+
+---
+
+## Platform Requirements
+
+### Android
+- Minimum SDK: 24 (Android 7.0)
+- Compile SDK: 36+
+- Permissions: POST_NOTIFICATIONS (auto-requested on Android 13+)
+
+### iOS
+- Minimum version: 12.0
+- Frameworks: UserNotifications
+- Permissions: Auto-requested on init
+
+### macOS
+- Minimum version: 10.14
+- Frameworks: UserNotifications
+- Permissions: Auto-requested on init
+
+---
+
+## See Also
+
+- [README.md](README.md) - Getting started guide
+- [DESIGN.md](DESIGN.md) - Architecture and design decisions
+- [Example App](example/) - Complete working example

@@ -7,7 +7,6 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 class MockMayrLocalNotificationsPlatform
     with MockPlatformInterfaceMixin
     implements MayrLocalNotificationsPlatform {
-
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
 
@@ -21,11 +20,8 @@ class MockMayrLocalNotificationsPlatform
   }) => Future.value();
 
   @override
-  Future<void> send({
-    required String title,
-    required String body,
-    Map<String, dynamic>? payload,
-  }) => Future.value();
+  Future<void> send({required String title, required String body, Map<String, dynamic>? payload}) =>
+      Future.value();
 
   @override
   Future<void> schedule({
@@ -67,10 +63,7 @@ void main() {
     MayrLocalNotificationsPlatform.instance = fakePlatform;
 
     // Should complete without error
-    await MayrLocalNotifications.send(
-      title: 'Test',
-      body: 'Test body',
-    );
+    await MayrLocalNotifications.send(title: 'Test', body: 'Test body');
   });
 
   test('schedule notification', () async {

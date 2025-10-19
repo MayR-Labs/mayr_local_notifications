@@ -6,12 +6,10 @@ import 'package:mayr_local_notifications/mayr_local_notifications.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize MayR Local Notifications
-  await MayrLocalNotifications.init(
-    enableDebugLogs: true,
-  );
-  
+  await MayrLocalNotifications.init(enableDebugLogs: true);
+
   runApp(const MyApp());
 }
 
@@ -122,25 +120,15 @@ class _MyAppState extends State<MyApp> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.notifications_active,
-                  size: 80,
-                  color: Colors.deepPurple,
-                ),
+                const Icon(Icons.notifications_active, size: 80, color: Colors.deepPurple),
                 const SizedBox(height: 20),
                 const Text(
                   'MayR Local Notifications Demo',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  'Running on: $_platformVersion',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+                Text('Running on: $_platformVersion', style: Theme.of(context).textTheme.bodySmall),
                 const SizedBox(height: 30),
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -150,10 +138,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                   child: Text(
                     _statusMessage,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -184,9 +169,7 @@ class _MyAppState extends State<MyApp> {
                   onPressed: _cancelAllNotifications,
                   icon: const Icon(Icons.cancel),
                   label: const Text('Cancel All Notifications'),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
+                  style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
                 ),
                 const SizedBox(height: 40),
                 const Divider(),
@@ -212,4 +195,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-

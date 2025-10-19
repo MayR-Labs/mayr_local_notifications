@@ -1,22 +1,21 @@
-
 import 'mayr_local_notifications_platform_interface.dart';
 
 /// MayrLocalNotifications - A simplified local notification plugin for Flutter
-/// 
+///
 /// Provides a plug-and-play experience for local notifications across
 /// Android, iOS, and macOS with minimal setup required.
 class MayrLocalNotifications {
   /// Initialize the notification system
-  /// 
+  ///
   /// This should be called once in your main() function before runApp().
-  /// 
+  ///
   /// Parameters:
   /// - [channelId]: Custom channel ID (Android only). Default: 'mayr_default_channel'
   /// - [channelName]: Custom channel name (Android only). Default: 'MayR Notifications'
   /// - [channelDescription]: Custom channel description (Android only). Default: 'Default notification channel'
   /// - [requestPermissions]: Whether to automatically request notification permissions. Default: true
   /// - [enableDebugLogs]: Enable debug logging. Default: false
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// void main() async {
@@ -42,14 +41,14 @@ class MayrLocalNotifications {
   }
 
   /// Send an immediate notification
-  /// 
+  ///
   /// Displays a notification immediately.
-  /// 
+  ///
   /// Parameters:
   /// - [title]: The notification title
   /// - [body]: The notification body text
   /// - [payload]: Optional custom data to include with the notification
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// await MayrLocalNotifications.send(
@@ -62,23 +61,19 @@ class MayrLocalNotifications {
     required String body,
     Map<String, dynamic>? payload,
   }) {
-    return MayrLocalNotificationsPlatform.instance.send(
-      title: title,
-      body: body,
-      payload: payload,
-    );
+    return MayrLocalNotificationsPlatform.instance.send(title: title, body: body, payload: payload);
   }
 
   /// Schedule a notification for a specific time
-  /// 
+  ///
   /// Schedules a notification to be displayed at the specified DateTime.
-  /// 
+  ///
   /// Parameters:
   /// - [title]: The notification title
   /// - [body]: The notification body text
   /// - [at]: The DateTime when the notification should be displayed
   /// - [payload]: Optional custom data to include with the notification
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// await MayrLocalNotifications.schedule(
@@ -102,9 +97,9 @@ class MayrLocalNotifications {
   }
 
   /// Cancel all pending notifications
-  /// 
+  ///
   /// Removes all scheduled notifications that haven't been displayed yet.
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// await MayrLocalNotifications.cancelAll();
