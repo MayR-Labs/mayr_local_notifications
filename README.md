@@ -1,7 +1,7 @@
 # 🕊️ MayR Local Notifications
 
 A **unified notification layer** for Flutter that simplifies setup and usage of local notifications across **Android**, **iOS**, and **macOS**.
-Built with love by **MayR Labs**, inspired by Laravel's elegance and simplicity.
+Built with ❤️ by **MayR Labs**.
 
 ---
 
@@ -45,10 +45,10 @@ import 'package:mayr_local_notifications/mayr_local_notifications.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize with default settings
   await MayrLocalNotifications.init();
-  
+
   runApp(const MyApp());
 }
 ```
