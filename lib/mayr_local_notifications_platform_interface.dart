@@ -8,7 +8,8 @@ abstract class MayrLocalNotificationsPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static MayrLocalNotificationsPlatform _instance = MethodChannelMayrLocalNotifications();
+  static MayrLocalNotificationsPlatform _instance =
+      MethodChannelMayrLocalNotifications();
 
   /// The default instance of [MayrLocalNotificationsPlatform] to use.
   ///
@@ -39,7 +40,11 @@ abstract class MayrLocalNotificationsPlatform extends PlatformInterface {
   }
 
   /// Send an immediate notification
-  Future<void> send({required String title, required String body, Map<String, dynamic>? payload}) {
+  Future<void> send({
+    required String title,
+    required String body,
+    Map<String, dynamic>? payload,
+  }) {
     throw UnimplementedError('send() has not been implemented.');
   }
 

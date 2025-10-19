@@ -36,7 +36,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> checkPermissionStatus() async {
     // Permission is now automatically requested when sending/scheduling notifications
     setState(() {
-      _statusMessage = 'Ready to send notifications! Permission will be requested automatically.';
+      _statusMessage =
+          'Ready to send notifications! Permission will be requested automatically.';
     });
   }
 
@@ -47,7 +48,8 @@ class _MyAppState extends State<MyApp> {
     // We also handle the message potentially returning null.
     try {
       platformVersion =
-          await _mayrLocalNotificationsPlugin.getPlatformVersion() ?? 'Unknown platform version';
+          await _mayrLocalNotificationsPlugin.getPlatformVersion() ??
+          'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -67,9 +69,11 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _permissionGranted = granted;
       if (granted) {
-        _statusMessage = 'Permission granted! You can now send notifications. ✅';
+        _statusMessage =
+            'Permission granted! You can now send notifications. ✅';
       } else {
-        _statusMessage = 'Permission denied. Please enable notifications in device settings. ❌';
+        _statusMessage =
+            'Permission denied. Please enable notifications in device settings. ❌';
       }
     });
   }
@@ -88,7 +92,8 @@ class _MyAppState extends State<MyApp> {
     } catch (e) {
       setState(() {
         _permissionGranted = false;
-        _statusMessage = 'Error: ${e.toString().contains('permission') ? 'Permission denied. Please enable notifications in settings.' : e} ❌';
+        _statusMessage =
+            'Error: ${e.toString().contains('permission') ? 'Permission denied. Please enable notifications in settings.' : e} ❌';
       });
     }
   }
@@ -100,16 +105,21 @@ class _MyAppState extends State<MyApp> {
         title: 'Scheduled Reminder 🕒',
         body: 'This notification was scheduled 10 seconds ago!',
         at: scheduledTime,
-        payload: {'type': 'scheduled', 'scheduledFor': scheduledTime.toString()},
+        payload: {
+          'type': 'scheduled',
+          'scheduledFor': scheduledTime.toString(),
+        },
       );
       setState(() {
-        _permissionGranted = true; // Permission was granted if schedule succeeded
+        _permissionGranted =
+            true; // Permission was granted if schedule succeeded
         _statusMessage = 'Notification scheduled for 10 seconds from now! ⏰';
       });
     } catch (e) {
       setState(() {
         _permissionGranted = false;
-        _statusMessage = 'Error: ${e.toString().contains('permission') ? 'Permission denied. Please enable notifications in settings.' : e} ❌';
+        _statusMessage =
+            'Error: ${e.toString().contains('permission') ? 'Permission denied. Please enable notifications in settings.' : e} ❌';
       });
     }
   }
@@ -145,7 +155,11 @@ class _MyAppState extends State<MyApp> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.notifications_active, size: 80, color: Colors.deepPurple),
+                const Icon(
+                  Icons.notifications_active,
+                  size: 80,
+                  color: Colors.deepPurple,
+                ),
                 const SizedBox(height: 20),
                 const Text(
                   'MayR Local Notifications Demo',
@@ -153,13 +167,21 @@ class _MyAppState extends State<MyApp> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
-                Text('Running on: $_platformVersion', style: Theme.of(context).textTheme.bodySmall),
+                Text(
+                  'Running on: $_platformVersion',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
                 const SizedBox(height: 10),
                 // Permission status indicator
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
-                    color: _permissionGranted ? Colors.green.shade100 : Colors.red.shade100,
+                    color: _permissionGranted
+                        ? Colors.green.shade100
+                        : Colors.red.shade100,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
@@ -168,14 +190,20 @@ class _MyAppState extends State<MyApp> {
                       Icon(
                         _permissionGranted ? Icons.check_circle : Icons.warning,
                         size: 16,
-                        color: _permissionGranted ? Colors.green.shade700 : Colors.red.shade700,
+                        color: _permissionGranted
+                            ? Colors.green.shade700
+                            : Colors.red.shade700,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        _permissionGranted ? 'Permission Granted' : 'Permission Denied',
+                        _permissionGranted
+                            ? 'Permission Granted'
+                            : 'Permission Denied',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _permissionGranted ? Colors.green.shade700 : Colors.red.shade700,
+                          color: _permissionGranted
+                              ? Colors.green.shade700
+                              : Colors.red.shade700,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -191,7 +219,10 @@ class _MyAppState extends State<MyApp> {
                   ),
                   child: Text(
                     _statusMessage,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -235,7 +266,9 @@ class _MyAppState extends State<MyApp> {
                   onPressed: _cancelAllNotifications,
                   icon: const Icon(Icons.cancel),
                   label: const Text('Cancel All Notifications'),
-                  style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
                 ),
                 const SizedBox(height: 40),
                 const Divider(),

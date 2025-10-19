@@ -20,8 +20,11 @@ class MockMayrLocalNotificationsPlatform
   }) => Future.value();
 
   @override
-  Future<void> send({required String title, required String body, Map<String, dynamic>? payload}) =>
-      Future.value();
+  Future<void> send({
+    required String title,
+    required String body,
+    Map<String, dynamic>? payload,
+  }) => Future.value();
 
   @override
   Future<void> schedule({
@@ -39,22 +42,29 @@ class MockMayrLocalNotificationsPlatform
 }
 
 void main() {
-  final MayrLocalNotificationsPlatform initialPlatform = MayrLocalNotificationsPlatform.instance;
+  final MayrLocalNotificationsPlatform initialPlatform =
+      MayrLocalNotificationsPlatform.instance;
 
   test('$MethodChannelMayrLocalNotifications is the default instance', () {
-    expect(initialPlatform, isInstanceOf<MethodChannelMayrLocalNotifications>());
+    expect(
+      initialPlatform,
+      isInstanceOf<MethodChannelMayrLocalNotifications>(),
+    );
   });
 
   test('getPlatformVersion', () async {
-    MayrLocalNotifications mayrLocalNotificationsPlugin = MayrLocalNotifications();
-    MockMayrLocalNotificationsPlatform fakePlatform = MockMayrLocalNotificationsPlatform();
+    MayrLocalNotifications mayrLocalNotificationsPlugin =
+        MayrLocalNotifications();
+    MockMayrLocalNotificationsPlatform fakePlatform =
+        MockMayrLocalNotificationsPlatform();
     MayrLocalNotificationsPlatform.instance = fakePlatform;
 
     expect(await mayrLocalNotificationsPlugin.getPlatformVersion(), '42');
   });
 
   test('init', () async {
-    MockMayrLocalNotificationsPlatform fakePlatform = MockMayrLocalNotificationsPlatform();
+    MockMayrLocalNotificationsPlatform fakePlatform =
+        MockMayrLocalNotificationsPlatform();
     MayrLocalNotificationsPlatform.instance = fakePlatform;
 
     // Should complete without error
@@ -62,7 +72,8 @@ void main() {
   });
 
   test('send notification', () async {
-    MockMayrLocalNotificationsPlatform fakePlatform = MockMayrLocalNotificationsPlatform();
+    MockMayrLocalNotificationsPlatform fakePlatform =
+        MockMayrLocalNotificationsPlatform();
     MayrLocalNotificationsPlatform.instance = fakePlatform;
 
     // Should complete without error
@@ -70,7 +81,8 @@ void main() {
   });
 
   test('schedule notification', () async {
-    MockMayrLocalNotificationsPlatform fakePlatform = MockMayrLocalNotificationsPlatform();
+    MockMayrLocalNotificationsPlatform fakePlatform =
+        MockMayrLocalNotificationsPlatform();
     MayrLocalNotificationsPlatform.instance = fakePlatform;
 
     // Should complete without error
@@ -82,7 +94,8 @@ void main() {
   });
 
   test('cancelAll', () async {
-    MockMayrLocalNotificationsPlatform fakePlatform = MockMayrLocalNotificationsPlatform();
+    MockMayrLocalNotificationsPlatform fakePlatform =
+        MockMayrLocalNotificationsPlatform();
     MayrLocalNotificationsPlatform.instance = fakePlatform;
 
     // Should complete without error
@@ -90,7 +103,8 @@ void main() {
   });
 
   test('requestPermission', () async {
-    MockMayrLocalNotificationsPlatform fakePlatform = MockMayrLocalNotificationsPlatform();
+    MockMayrLocalNotificationsPlatform fakePlatform =
+        MockMayrLocalNotificationsPlatform();
     MayrLocalNotificationsPlatform.instance = fakePlatform;
 
     // Should return true

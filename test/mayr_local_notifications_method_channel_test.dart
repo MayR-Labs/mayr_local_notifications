@@ -5,35 +5,32 @@ import 'package:mayr_local_notifications/mayr_local_notifications_method_channel
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  MethodChannelMayrLocalNotifications platform = MethodChannelMayrLocalNotifications();
+  MethodChannelMayrLocalNotifications platform =
+      MethodChannelMayrLocalNotifications();
   const MethodChannel channel = MethodChannel('mayr_local_notifications');
 
   setUp(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-      channel,
-      (MethodCall methodCall) async {
-        switch (methodCall.method) {
-          case 'getPlatformVersion':
-            return '42';
-          case 'requestPermission':
-            return true;
-          case 'init':
-          case 'send':
-          case 'schedule':
-          case 'cancelAll':
-            return null;
-          default:
-            return null;
-        }
-      },
-    );
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+          switch (methodCall.method) {
+            case 'getPlatformVersion':
+              return '42';
+            case 'requestPermission':
+              return true;
+            case 'init':
+            case 'send':
+            case 'schedule':
+            case 'cancelAll':
+              return null;
+            default:
+              return null;
+          }
+        });
   });
 
   tearDown(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-      channel,
-      null,
-    );
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('getPlatformVersion', () async {

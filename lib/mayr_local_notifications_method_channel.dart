@@ -4,14 +4,17 @@ import 'package:flutter/services.dart';
 import 'mayr_local_notifications_platform_interface.dart';
 
 /// An implementation of [MayrLocalNotificationsPlatform] that uses method channels.
-class MethodChannelMayrLocalNotifications extends MayrLocalNotificationsPlatform {
+class MethodChannelMayrLocalNotifications
+    extends MayrLocalNotificationsPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
   final methodChannel = const MethodChannel('mayr_local_notifications');
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version = await methodChannel.invokeMethod<String>(
+      'getPlatformVersion',
+    );
     return version;
   }
 
@@ -26,7 +29,8 @@ class MethodChannelMayrLocalNotifications extends MayrLocalNotificationsPlatform
     await methodChannel.invokeMethod('init', {
       'channelId': channelId ?? 'mayr_default_channel',
       'channelName': channelName ?? 'MayR Notifications',
-      'channelDescription': channelDescription ?? 'Default notification channel',
+      'channelDescription':
+          channelDescription ?? 'Default notification channel',
       'requestPermissions': requestPermissions,
       'enableDebugLogs': enableDebugLogs,
     });
@@ -38,7 +42,11 @@ class MethodChannelMayrLocalNotifications extends MayrLocalNotificationsPlatform
     required String body,
     Map<String, dynamic>? payload,
   }) async {
-    await methodChannel.invokeMethod('send', {'title': title, 'body': body, 'payload': payload});
+    await methodChannel.invokeMethod('send', {
+      'title': title,
+      'body': body,
+      'payload': payload,
+    });
   }
 
   @override

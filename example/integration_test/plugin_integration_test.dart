@@ -31,35 +31,35 @@ void main() {
 
   testWidgets('Send notification test', (WidgetTester tester) async {
     await MayrLocalNotifications.init();
-    
+
     // Test sending notification - should not throw
     await MayrLocalNotifications.send(
       title: 'Integration Test',
       body: 'This is a test notification',
     );
-    
+
     expect(true, true);
   });
 
   testWidgets('Schedule notification test', (WidgetTester tester) async {
     await MayrLocalNotifications.init();
-    
+
     // Test scheduling notification - should not throw
     await MayrLocalNotifications.schedule(
       title: 'Scheduled Test',
       body: 'This is a scheduled test notification',
       at: DateTime.now().add(const Duration(seconds: 10)),
     );
-    
+
     expect(true, true);
   });
 
   testWidgets('Cancel all notifications test', (WidgetTester tester) async {
     await MayrLocalNotifications.init();
-    
+
     // Test canceling notifications - should not throw
     await MayrLocalNotifications.cancelAll();
-    
+
     expect(true, true);
   });
 }

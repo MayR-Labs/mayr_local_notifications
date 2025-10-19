@@ -67,10 +67,16 @@ class MayrLocalNotifications {
     // Automatically request permission if not granted
     final granted = await requestPermission();
     if (!granted) {
-      throw Exception('Notification permission denied. Please enable notifications in settings.');
+      throw Exception(
+        'Notification permission denied. Please enable notifications in settings.',
+      );
     }
-    
-    return MayrLocalNotificationsPlatform.instance.send(title: title, body: body, payload: payload);
+
+    return MayrLocalNotificationsPlatform.instance.send(
+      title: title,
+      body: body,
+      payload: payload,
+    );
   }
 
   /// Schedule a notification for a specific time
@@ -103,9 +109,11 @@ class MayrLocalNotifications {
     // Automatically request permission if not granted
     final granted = await requestPermission();
     if (!granted) {
-      throw Exception('Notification permission denied. Please enable notifications in settings.');
+      throw Exception(
+        'Notification permission denied. Please enable notifications in settings.',
+      );
     }
-    
+
     return MayrLocalNotificationsPlatform.instance.schedule(
       title: title,
       body: body,
