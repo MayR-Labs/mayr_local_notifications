@@ -1,3 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.mayrlabs.mayr_local_notifications">
+  
+  <application>
+    <!-- BroadcastReceiver for scheduled notifications -->
+    <receiver 
+      android:name=".NotificationReceiver"
+      android:exported="false" />
+  </application>
 </manifest>
