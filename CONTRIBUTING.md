@@ -45,8 +45,8 @@ Enhancement suggestions are welcome! Please provide:
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/mayr_local_notifications.git
-cd mayr_local_notifications
+git clone https://github.com/MayR-Labs/flutter_local_notifications.git
+cd flutter_local_notifications
 
 # Get dependencies
 flutter pub get
@@ -62,7 +62,7 @@ flutter run
 ### Project Structure
 
 ```
-mayr_local_notifications/
+flutter_local_notifications/
 ├── lib/                          # Dart public API
 ├── android/                      # Android implementation
 ├── ios/                          # iOS implementation
@@ -84,10 +84,10 @@ mayr_local_notifications/
 Example:
 ```dart
 /// Send an immediate notification.
-/// 
+///
 /// The [title] and [body] parameters are required. An optional [payload]
 /// can be attached for custom data.
-/// 
+///
 /// Throws [PlatformException] if sending fails.
 static Future<void> send({
   required String title,
@@ -136,7 +136,7 @@ flutter test integration_test/
 Example:
 ```dart
 test('send notification with payload', () async {
-  MockMayrLocalNotificationsPlatform fakePlatform = 
+  MockMayrLocalNotificationsPlatform fakePlatform =
     MockMayrLocalNotificationsPlatform();
   MayrLocalNotificationsPlatform.instance = fakePlatform;
 
@@ -145,7 +145,7 @@ test('send notification with payload', () async {
     body: 'Test body',
     payload: {'key': 'value'},
   );
-  
+
   // Verify the method was called
   expect(fakePlatform.sendCalled, true);
 });

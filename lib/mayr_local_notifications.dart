@@ -64,13 +64,7 @@ class MayrLocalNotifications {
     required String body,
     Map<String, dynamic>? payload,
   }) async {
-    // Automatically request permission if not granted
-    final granted = await requestPermission();
-    if (!granted) {
-      throw Exception(
-        'Notification permission denied. Please enable notifications in settings.',
-      );
-    }
+    await _ensurePermissionGranted();
 
     return MayrLocalNotificationsPlatform.instance.send(
       title: title,
@@ -106,13 +100,7 @@ class MayrLocalNotifications {
     required DateTime at,
     Map<String, dynamic>? payload,
   }) async {
-    // Automatically request permission if not granted
-    final granted = await requestPermission();
-    if (!granted) {
-      throw Exception(
-        'Notification permission denied. Please enable notifications in settings.',
-      );
-    }
+    await _ensurePermissionGranted();
 
     return MayrLocalNotificationsPlatform.instance.schedule(
       title: title,
@@ -159,5 +147,15 @@ class MayrLocalNotifications {
   /// Get the platform version (for debugging)
   Future<String?> getPlatformVersion() {
     return MayrLocalNotificationsPlatform.instance.getPlatformVersion();
+  }
+
+  static Future<void> _ensurePermissionGranted() async {
+    final granted = await requestPermission();
+
+    if (!granted) {
+      throw Exception(
+        'Notification permission denied. Please enable notifications in settings.',
+      );
+    }
   }
 }

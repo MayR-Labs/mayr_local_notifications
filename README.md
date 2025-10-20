@@ -1,3 +1,17 @@
+![License](https://img.shields.io/badge/license-MIT-blue.svg?label=Licence)
+![Platform](https://img.shields.io/badge/Platform-Flutter-blue.svg)
+
+![Pub Version](https://img.shields.io/pub/v/mayr_local_notifications?style=plastic&label=Version)
+![Pub.dev Score](https://img.shields.io/pub/points/mayr_local_notifications?label=Score&style=plastic)
+![Pub Likes](https://img.shields.io/pub/likes/mayr_local_notifications?label=Likes&style=plastic)
+![Pub.dev Publisher](https://img.shields.io/pub/publisher/mayr_local_notifications?label=Publisher&style=plastic)
+![Downloads](https://img.shields.io/pub/dm/mayr_local_notifications.svg?label=Downloads&style=plastic)
+
+![Build Status](https://img.shields.io/github/actions/workflow/status/MayR-Labs/flutter_local_notifications/ci.yaml?label=Build)
+![Issues](https://img.shields.io/github/issues/MayR-Labs/flutter_local_notifications.svg?label=Issues)
+![Last Commit](https://img.shields.io/github/last-commit/MayR-Labs/flutter_local_notifications.svg?label=Latest%20Commit)
+![Contributors](https://img.shields.io/github/contributors/MayR-Labs/flutter_local_notifications.svg?label=Contributors)
+
 # 🕊️ MayR Local Notifications
 
 A **unified notification layer** for Flutter that simplifies setup and usage of local notifications across **Android**, **iOS**, and **macOS**.
@@ -45,19 +59,19 @@ flutter pub get
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
-    
+
     <application ...>
         <!-- Add this receiver inside <application> for scheduled notifications -->
-        <receiver 
+        <receiver
             android:name="com.mayrlabs.mayr_local_notifications.NotificationReceiver"
             android:exported="false" />
-        
+
         <!-- Your activities and other components -->
     </application>
 </manifest>
 ```
 
-**Permissions are handled automatically!** 
+**Permissions are handled automatically!**
 
 When you call `send()` or `schedule()`, the plugin will automatically request permission if needed. You don't need to manually call `requestPermission()` unless you want to request permission upfront.
 
@@ -243,13 +257,13 @@ Add the following to your app's `android/app/src/main/AndroidManifest.xml`:
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
-    
+
     <application ...>
         <!-- Add this receiver inside the <application> tag for scheduled notifications -->
-        <receiver 
+        <receiver
             android:name="com.mayrlabs.mayr_local_notifications.NotificationReceiver"
             android:exported="false" />
-        
+
         <!-- Your other app components (activities, etc.) -->
     </application>
 </manifest>
@@ -346,10 +360,10 @@ Perfect for:
    - The app must request `POST_NOTIFICATIONS` permission at runtime
    - Use the `permission_handler` package to request permissions
    - Check if permission is granted: Go to Settings > Apps > Your App > Notifications
-   
+
    ```dart
    import 'package:permission_handler/permission_handler.dart';
-   
+
    Future<void> checkAndRequestPermission() async {
      final status = await Permission.notification.status;
      if (!status.isGranted) {
@@ -414,25 +428,56 @@ Perfect for:
 
 ---
 
-## 📄 License
+## 📢 Additional Information
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### 🤝 Contributing
+Contributions are highly welcome!
+If you have ideas for new extensions, improvements, or fixes, feel free to fork the repository and submit a pull request.
 
----
+Please make sure to:
+- Follow the existing coding style.
+- Write tests for new features.
+- Update documentation if necessary.
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
----
-
-## 💬 Support
-
-If you encounter any issues or have questions:
-1. Check the [example app](example/)
-2. Enable debug logs and check the console output
-3. Open an issue on [GitHub](https://github.com/MayR-Labs/mayr_local_notifications/issues)
+> Let's build something amazing together!
 
 ---
 
-Built with ❤️ by **MayR Labs**
+### 🐛 Reporting Issues
+If you encounter a bug, unexpected behaviour, or have feature requests:
+- Open an issue on the repository.
+- Provide a clear description and steps to reproduce (if it's a bug).
+- Suggest improvements if you have any ideas.
+
+> Your feedback helps make the package better for everyone!
+
+---
+
+### 🧑‍💻 Author
+
+**MayR Labs**
+
+Crafting clean, reliable, and human-centric Flutter and Dart solutions.
+🌍 [mayrlabs.com](https://mayrlabs.com)
+
+---
+
+### 📜 Licence
+This package is licensed under the MIT License — which means you are free to use it for commercial and non-commercial projects, with proper attribution.
+
+> See the [LICENSE](LICENSE) file for more details.
+
+MIT © 2025 [MayR Labs](https://github.com/MayR-Labs)
+
+---
+
+## 🌟 Support
+
+If you find this package helpful, please consider giving it a ⭐️ on GitHub — it motivates and helps the project grow!
+
+You can also support by:
+- Sharing the package with your friends, colleagues, and tech communities.
+- Using it in your projects and giving feedback.
+- Contributing new ideas, features, or improvements.
+
+> Every little bit of support counts! 🚀💙
